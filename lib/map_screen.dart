@@ -1,23 +1,14 @@
 import 'package:flutter/material.dart';
+import 'detail_screen.dart';
 
 const List<String?> cityList = [
-  null,
-  "강릉",
-  "서울",
-  "춘천",
-  "인천",
-  "안동",
-  "전주",
-  "경주",
-  "나주",
-  "부산",
-  null,
-  null,
-  "제주",
+  null, "강릉", "서울", "춘천", "인천", "안동",
+  "전주", "경주", "나주", "부산", null, null, "제주",
 ];
 
 class MapScreen extends StatefulWidget {
-  const MapScreen({super.key});
+  const MapScreen({super.key, required this.info});
+  final Map<String, dynamic> info; // ↑ 상위에서 받은 info
 
   @override
   State<MapScreen> createState() => _MapScreenState();
@@ -32,13 +23,9 @@ class _MapScreenState extends State<MapScreen> {
         child: Column(
           children: [
             Container(
-              margin: const EdgeInsets.only(top: 10.0, left: 10.0, right: 10.0),
-              padding: const EdgeInsets.only(
-                top: 30.0,
-                left: 80.0,
-                right: 80.0,
-              ),
-              height: 700.0,
+              margin: const EdgeInsets.only(top: 10, left: 10, right: 10),
+              padding: const EdgeInsets.only(top: 30, left: 80, right: 80),
+              height: 700,
               decoration: const BoxDecoration(
                 image: DecorationImage(
                   fit: BoxFit.cover,
@@ -49,14 +36,31 @@ class _MapScreenState extends State<MapScreen> {
                 physics: const NeverScrollableScrollPhysics(),
                 padding: EdgeInsets.zero,
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  mainAxisSpacing: 5.0,
-                  crossAxisSpacing: 45.0,
+                  crossAxisCount: 2, mainAxisSpacing: 5, crossAxisSpacing: 45,
                 ),
+                itemCount: cityList.length,
                 itemBuilder: (context, index) => cityList[index] != null
                     ? InkWell(
-                        onTap: () {},
-                        borderRadius: BorderRadius.circular(30.0),
+                        onTap: () {
+                          final city = cityList[index]!;
+                          final list = widget.info[city] as List<dynamic>?;
+                          if (list == null) {
+                            // (책엔 없지만 충돌 방지용 안내)
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(content: Text('$city 데이터가 없습니다.')),
+                            );
+                            return;
+                          }
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (_) => DetailScreen(
+                                city: city,
+                                info: list,
+                              ),
+                            ),
+                          );
+                        },
+                        borderRadius: BorderRadius.circular(30),
                         child: Container(
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
@@ -69,15 +73,11 @@ class _MapScreenState extends State<MapScreen> {
                             ][index % 5],
                           ),
                           child: Center(
-                            child: Text(
-                              cityList[index]!,
-                              style: const TextStyle(fontSize: 20.0),
-                            ),
+                            child: Text(cityList[index]!, style: const TextStyle(fontSize: 20)),
                           ),
                         ),
                       )
-                    : Container(),
-                itemCount: cityList.length,
+                    : const SizedBox.shrink(),
               ),
             ),
           ],
