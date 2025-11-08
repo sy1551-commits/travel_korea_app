@@ -1,20 +1,48 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
+
 import 'detail_screen.dart';
 
 const List<String?> cityList = [
-  null, "강릉", "서울", "춘천", "인천", "안동",
-  "전주", "경주", "나주", "부산", null, null, "제주",
+  null,
+  "강릉",
+  "서울",
+  "춘천",
+  "인천",
+  "안동",
+  "전주",
+  "경주",
+  "나주",
+  "부산",
+  null,
+  null,
+  "제주",
 ];
 
 class MapScreen extends StatefulWidget {
-  const MapScreen({super.key, required this.info});
-  final Map<String, dynamic> info; // ↑ 상위에서 받은 info
+  const MapScreen({super.key});
 
   @override
   State<MapScreen> createState() => _MapScreenState();
 }
 
 class _MapScreenState extends State<MapScreen> {
+  Map<String, dynamic> info = {};
+  List<bool> cityCheckInList = List<bool>.generate(
+    cityList.length,
+    (_) => false,
+  );
+
+  @override
+  void initState() {
+    super.initState();
+    DefaultAssetBundle.of(context).loadString("assets/json/info.json").then((
+      data,
+    ) {
+      info = jsonDecode(data);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -36,31 +64,29 @@ class _MapScreenState extends State<MapScreen> {
                 physics: const NeverScrollableScrollPhysics(),
                 padding: EdgeInsets.zero,
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2, mainAxisSpacing: 5, crossAxisSpacing: 45,
+                  crossAxisCount: 2,
+                  mainAxisSpacing: 5,
+                  crossAxisSpacing: 45,
                 ),
-                itemCount: cityList.length,
                 itemBuilder: (context, index) => cityList[index] != null
                     ? InkWell(
                         onTap: () {
-                          final city = cityList[index]!;
-                          final list = widget.info[city] as List<dynamic>?;
-                          if (list == null) {
-                            // (책엔 없지만 충돌 방지용 안내)
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(content: Text('$city 데이터가 없습니다.')),
-                            );
-                            return;
-                          }
                           Navigator.of(context).push(
                             MaterialPageRoute(
                               builder: (_) => DetailScreen(
-                                city: city,
-                                info: list,
+                                city: cityList[index]!,
+                                info: info[cityList[index]!] as List<dynamic>,
+                                isCheckedIn: cityCheckInList[index],
+                                onCheckInChanged: (bool value) {
+                                  setState(() {
+                                    cityCheckInList[index] = value;
+                                  });
+                                },
                               ),
                             ),
                           );
                         },
-                        borderRadius: BorderRadius.circular(30),
+                        borderRadius: BorderRadius.circular(30.0),
                         child: Container(
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
@@ -73,11 +99,17 @@ class _MapScreenState extends State<MapScreen> {
                             ][index % 5],
                           ),
                           child: Center(
-                            child: Text(cityList[index]!, style: const TextStyle(fontSize: 20)),
+                            child: cityCheckInList[index]
+                                ? const Icon(Icons.check)
+                                : Text(
+                                    cityList[index]!,
+                                    style: const TextStyle(fontSize: 20.0),
+                                  ),
                           ),
                         ),
                       )
-                    : const SizedBox.shrink(),
+                    : Container(),
+                itemCount: cityList.length,
               ),
             ),
           ],
