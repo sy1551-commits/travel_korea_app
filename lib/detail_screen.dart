@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../components/list_item.dart';
+
 class DetailScreen extends StatefulWidget {
   const DetailScreen({
     super.key,
@@ -47,41 +49,12 @@ class _DetailScreenState extends State<DetailScreen> {
                       widget.onCheckInChanged(value);
                     },
                   ),
-                  const Text("체크인", style: TextStyle(fontSize: 24.0,),),
+                  const Text("체크인", style: TextStyle(fontSize: 24.0)),
                 ],
               ),
             );
           }
-          return ListTile(
-            title: Row(
-              mainAxisSize: MainAxisSize.max,
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  widget.info[index - 1]["name"] ?? "",
-                  style: const TextStyle(
-                    fontSize: 20.0,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                Tooltip(
-                  triggerMode: TooltipTriggerMode.tap,
-                  message: widget.info[index - 1]["cost"] ?? "",
-                  child: const Icon(Icons.attach_money),
-                ),
-              ],
-            ),
-            subtitle: Text(
-              "${widget.info[index - 1]["description"] ?? ""}\n위치: ${widget.info[index - 1]["address"] ?? ""}"),
-            trailing: SizedBox(
-              width: 100.0,
-              height: 100.0,
-              child: Image.asset(
-                "assets/images/${widget.info[index - 1]["image"] ?? "placeholder.png"}",
-                fit: BoxFit.cover,
-              ),
-            ),
-          );
+          return ListItem(data: widget.info[index - 1]);
         },
         itemCount: widget.info.length + 1,
       ),
