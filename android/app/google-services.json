@@ -1,0 +1,49 @@
+{
+  "project_info": {
+    "project_number": "1013103557669",
+    "firebase_url": "https://gomsu-pretty-default-rtdb.firebaseio.com",
+    "project_id": "gomsu-pretty",
+    "storage_bucket": "gomsu-pretty.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1013103557669:android:062758993ebb8f0ab793cc",
+        "android_client_info": {
+          "package_name": "com.example.daily_cats_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAAT2hk8wX-Ul-27UblkzUYA1FUPfHW3Xc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1013103557669:android:7c989a5b947bbf4bb793cc",
+        "android_client_info": {
+          "package_name": "com.example.travel_korea_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAAT2hk8wX-Ul-27UblkzUYA1FUPfHW3Xc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

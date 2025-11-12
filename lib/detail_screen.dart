@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-
+import 'package:firebase_database/firebase_database.dart';
 import '../components/list_item.dart';
 
 class DetailScreen extends StatefulWidget {
@@ -20,11 +20,34 @@ class DetailScreen extends StatefulWidget {
 }
 
 class _DetailScreenState extends State<DetailScreen> {
+  FirebaseDatabase database = FirebaseDatabase.instance;
+  DatabaseReference rootRef = FirebaseDatabase.instance.ref();
+  int checkInCount = 0;
   bool isCheckedIn = false;
+
+  void getCheckInCount() async {
+    if (!mounted) return;
+    final snapshot = await rootRef.get();
+    if (snapshot.exists) {
+      final data = snapshot.value as Map;
+      setState(() {
+        checkInCount = data[widget.city] ?? 0;
+      });
+    }
+  }
+
   @override
   void initState() {
     super.initState();
     isCheckedIn = widget.isCheckedIn;
+    getCheckInCount();
+    rootRef.onValue.listen((DatabaseEvent event) {
+      if (!mounted) return;
+      final data = event.snapshot.value as Map;
+      setState(() {
+        checkInCount = data[widget.city] ?? 0;
+      });
+    });
   }
 
   @override
@@ -36,20 +59,28 @@ class _DetailScreenState extends State<DetailScreen> {
           if (index == 0) {
             return Padding(
               padding: const EdgeInsets.symmetric(vertical: 10.0),
-              child: Row(
-                mainAxisSize: MainAxisSize.max,
-                mainAxisAlignment: MainAxisAlignment.center,
+              child: Column(
                 children: [
-                  Switch(
-                    value: isCheckedIn,
-                    onChanged: (bool value) {
-                      setState(() {
-                        isCheckedIn = value;
-                      });
-                      widget.onCheckInChanged(value);
-                    },
+                  Text(
+                    "현재 체크인한 사람: $checkInCount명",
+                    style: const TextStyle(fontSize: 20.0),
                   ),
-                  const Text("체크인", style: TextStyle(fontSize: 24.0)),
+                  Row(
+                    mainAxisSize: MainAxisSize.max,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Switch(
+                        value: isCheckedIn,
+                        onChanged: (bool value) {
+                          setState(() {
+                            isCheckedIn = value;
+                          });
+                          widget.onCheckInChanged(value);
+                        },
+                      ),
+                      const Text("체크인", style: TextStyle(fontSize: 24.0)),
+                    ],
+                  ),
                 ],
               ),
             );

@@ -1,12 +1,15 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
 import 'map_screen.dart';
 
-void main() async {
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   final raw = await rootBundle.loadString('assets/json/info.json');
-  final Map<String, dynamic> info = jsonDecode(raw); // 도시명 → List
+  final Map<String, dynamic> info = jsonDecode(raw);
   runApp(MyApp(info: info));
 }
 
@@ -16,12 +19,6 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-      ),
-      home: MapScreen(),
-    );
+    return MaterialApp(title: 'Travel Korea App', home: const MapScreen());
   }
 }
