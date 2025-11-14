@@ -36,6 +36,16 @@ class _DetailScreenState extends State<DetailScreen> {
     }
   }
 
+  void incrementCheckInCount() async {
+    if (!mounted) return;
+    rootRef.child(widget.city).set(ServerValue.increment(1));
+  }
+
+  void decrementCheckInCount() async {
+    if (!mounted) return;
+    rootRef.child(widget.city).set(ServerValue.increment(-1));
+  }
+
   @override
   void initState() {
     super.initState();
@@ -48,6 +58,11 @@ class _DetailScreenState extends State<DetailScreen> {
         checkInCount = data[widget.city] ?? 0;
       });
     });
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
   }
 
   @override
@@ -76,6 +91,11 @@ class _DetailScreenState extends State<DetailScreen> {
                             isCheckedIn = value;
                           });
                           widget.onCheckInChanged(value);
+                          if (value) {
+                            incrementCheckInCount();
+                          } else {
+                            decrementCheckInCount();
+                          }
                         },
                       ),
                       const Text("체크인", style: TextStyle(fontSize: 24.0)),
